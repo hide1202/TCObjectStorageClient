@@ -1,0 +1,40 @@
+﻿<Window x:Class="TCObjectStorageClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TCObjectStorageClient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Tenent Name"/>
+            <TextBox Grid.Column="1" Text="{Binding TenentName}"/>
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="User Name"/>
+            <TextBox Grid.Column="1" Text="{Binding UserName}"/>
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Password"/>
+            <PasswordBox Grid.Column="1" PasswordChanged="OnPasswordChanged"/>
+        </Grid>
+
+        <TextBox Text="{Binding Account}"/>
+        <Button Content="Upload" Command="{Binding OpenFileCommand}" />
+    </StackPanel>
+</Window>
