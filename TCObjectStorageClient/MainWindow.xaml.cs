@@ -46,9 +46,9 @@ namespace TCObjectStorageClient
             return true;
         }
 
-        public async void Execute(object parameter)
+        public void Execute(object parameter)
         {
-            await _viewModel.UploadFiles();
+            _viewModel.UploadFiles();
         }
 
         public event EventHandler CanExecuteChanged;

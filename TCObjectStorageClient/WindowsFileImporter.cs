@@ -9,6 +9,7 @@ namespace TCObjectStorageClient
         public IList<string> GetFilePathList()
         {
             var dialog = new OpenFileDialog();
+            dialog.Multiselect = true;
             var isShow = dialog.ShowDialog();
             if (isShow.HasValue && isShow.Value)
             {
