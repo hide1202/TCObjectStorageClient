@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -106,6 +107,46 @@ namespace TCObjectStorageClient.ViewModels
                     }
                 });
             }
+        }
+
+        public async void UploadDirectory()
+        {
+            var dirInfo = _fileImporter.GetDirectoryInfo();
+            if (dirInfo == null)
+                return;
+
+            var entity = new DirectoryEntity(dirInfo.FullName);
+            var children = entity.GetAllChildren();
+#if DEBUG
+            foreach (var child in children)
+            {
+                Debug.WriteLine($"{child.pathFromBase} : {child.entity.Path}");
+            }
+#endif
+
+            var isSuccess = true;
+            foreach (var child in children)
+            {
+                TCObjectStorage client = new TCObjectStorage();
+                var token = await client.PostToken(TenentName, UserName, Password);
+
+                if (token == null)
+                {
+                    _alertDialog.ShowAlert("Failed to get a token");
+                    return;
+                }
+
+                var hasContainer = await client.ContainsContainer(token, Account, ContainerName);
+                if (!hasContainer)
+                {
+                    _alertDialog.ShowAlert($"Invalid [{ContainerName}] container");
+                    return;
+                }
+
+                var filePath = child.pathFromBase.Replace('\\', '/');
+                isSuccess &= await client.UploadFile(token, Account, ContainerName, filePath, File.ReadAllBytes(child.entity.Path));
+            }
+            _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

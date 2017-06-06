@@ -32,26 +32,49 @@ namespace TCObjectStorageClient
         }
     }
 
-    public class OpenFileCommand : ICommand
+    public abstract class CommandBase : ICommand
     {
-        private readonly MainViewModel _viewModel;
+        protected readonly MainViewModel _viewModel;
 
-        public OpenFileCommand(MainViewModel viewModel)
+        public CommandBase(MainViewModel viewModel)
         {
             _viewModel = viewModel;
         }
 
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
+        public bool CanExecute(object parameter) => true;
 
         public void Execute(object parameter)
         {
-            _viewModel.UploadFiles();
+            ExecuteInternal();
         }
 
         public event EventHandler CanExecuteChanged;
+
+        protected abstract void ExecuteInternal();
+    }
+
+    public class OpenFileCommand : CommandBase
+    {
+        public OpenFileCommand(MainViewModel viewModel) : base(viewModel)
+        {
+        }
+
+        protected override void ExecuteInternal()
+        {
+            _viewModel.UploadFiles();
+        }
+    }
+
+    public class OpenDirectoryCommand : CommandBase
+    {
+        public OpenDirectoryCommand(MainViewModel viewModel) : base(viewModel)
+        {
+        }
+
+        protected override void ExecuteInternal()
+        {
+            _viewModel.UploadDirectory();
+        }
     }
 
     namespace ViewModels
@@ -59,6 +82,8 @@ namespace TCObjectStorageClient
         public partial class MainViewModel
         {
             public ICommand OpenFileCommand => new OpenFileCommand(this);
+
+            public ICommand OpenDirectoryCommand => new OpenDirectoryCommand(this);
         }
     }
 }

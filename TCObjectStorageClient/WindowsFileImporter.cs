@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Win32;
+using System.IO;
+using System.Windows.Forms;
 using TCObjectStorageClient.Interfaces;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace TCObjectStorageClient
 {
@@ -16,6 +18,17 @@ namespace TCObjectStorageClient
                 return dialog.FileNames;
             }
             return new List<string>();
+        }
+
+        public DirectoryInfo GetDirectoryInfo()
+        {
+            var dialog = new FolderBrowserDialog();
+            var result = dialog.ShowDialog();
+            if (result == DialogResult.OK || result == DialogResult.Yes)
+            {
+                return new DirectoryInfo(dialog.SelectedPath);
+            }
+            return null;
         }
     }
 }

@@ -51,7 +51,8 @@ namespace TCObjectStorageClient.ObjectStorage
             var url = $"https://api-storage.cloud.toast.com/v1/{account}/{containerName}";
             client.DefaultRequestHeaders.Add("X-Auth-Token", token);
             var response = await client.GetAsync(url);
-            return response.StatusCode == HttpStatusCode.OK;
+            var statusCode = (int)response.StatusCode;
+            return statusCode >= 200 && statusCode < 300;
         }
     }
 }
