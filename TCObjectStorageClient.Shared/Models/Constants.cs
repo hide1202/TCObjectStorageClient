@@ -5,5 +5,6 @@
         public const string TenentNameKey = "orgViewpointTenentname";
         public const string AccountKey = "orgViewpointAccount";
         public const string UserNameKey = "orgViewpointUsername";
+        public const string ContainerNameKey = "orgViewpointContainerName";
     }
 }

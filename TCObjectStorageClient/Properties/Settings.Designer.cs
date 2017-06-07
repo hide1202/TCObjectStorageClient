@@ -58,5 +58,17 @@ namespace TCObjectStorageClient.Properties {
                 this["orgViewpointUsername"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string orgViewpointContainerName {
+            get {
+                return ((string)(this["orgViewpointContainerName"]));
+            }
+            set {
+                this["orgViewpointContainerName"] = value;
+            }
+        }
     }
 }

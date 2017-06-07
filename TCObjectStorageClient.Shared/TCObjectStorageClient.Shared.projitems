@@ -9,10 +9,14 @@
     <Import_RootNamespace>TCObjectStorageClient</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)EnumerableUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IAlertDialog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IFileImporter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IO\IPreferences.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CreateTokenRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CreateTokenResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\IDiskEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectStorage\IObjectStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectStorage\TCObjectStorage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />

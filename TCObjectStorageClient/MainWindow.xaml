@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TCObjectStorageClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <StackPanel>
+    <StackPanel Margin="10">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100px"/>
@@ -34,7 +34,24 @@
             <PasswordBox Grid.Column="1" PasswordChanged="OnPasswordChanged"/>
         </Grid>
 
-        <TextBox Text="{Binding Account}"/>
-        <Button Content="Upload" Command="{Binding OpenFileCommand}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Account"/>
+            <TextBox Grid.Column="1" Text="{Binding Account}"/>
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100px"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="Container name"/>
+            <TextBox Grid.Column="1" Text="{Binding ContainerName}"/>
+        </Grid>
+        <Button Content="Upload files" Command="{Binding OpenFileCommand}" />
+        <Button Content="Upload directory" Command="{Binding OpenDirectoryCommand}" />
     </StackPanel>
 </Window>
