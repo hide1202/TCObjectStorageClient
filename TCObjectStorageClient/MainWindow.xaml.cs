@@ -53,27 +53,18 @@ namespace TCObjectStorageClient
         protected abstract void ExecuteInternal();
     }
 
-    public class OpenFileCommand : CommandBase
+    public class DelegateCommand : CommandBase
     {
-        public OpenFileCommand(MainViewModel viewModel) : base(viewModel)
+        private readonly Action _action;
+
+        public DelegateCommand(MainViewModel viewModel, Action action) : base(viewModel)
         {
+            _action = action;
         }
 
         protected override void ExecuteInternal()
         {
-            _viewModel.UploadFiles();
-        }
-    }
-
-    public class OpenDirectoryCommand : CommandBase
-    {
-        public OpenDirectoryCommand(MainViewModel viewModel) : base(viewModel)
-        {
-        }
-
-        protected override void ExecuteInternal()
-        {
-            _viewModel.UploadDirectory();
+            _action();
         }
     }
 
@@ -81,9 +72,11 @@ namespace TCObjectStorageClient
     {
         public partial class MainViewModel
         {
-            public ICommand OpenFileCommand => new OpenFileCommand(this);
+            public ICommand OpenFileCommand => new DelegateCommand(this, UploadFiles);
 
-            public ICommand OpenDirectoryCommand => new OpenDirectoryCommand(this);
+            public ICommand OpenDirectoryCommand => new DelegateCommand(this, UploadDirectory);
+
+            public ICommand DeleteFilesCommand => new DelegateCommand(this, DeleteAllFilesInContainer);
         }
     }
 }

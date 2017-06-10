@@ -53,5 +53,6 @@
         </Grid>
         <Button Content="Upload files" Command="{Binding OpenFileCommand}" />
         <Button Content="Upload directory" Command="{Binding OpenDirectoryCommand}" />
+        <Button Content="Delete files in Container" Command="{Binding DeleteFilesCommand}" />
     </StackPanel>
 </Window>

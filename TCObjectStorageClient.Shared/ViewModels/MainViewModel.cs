@@ -1,8 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using TCObjectStorageClient.Annotations;
 using TCObjectStorageClient.Interfaces;
 using TCObjectStorageClient.IO;
@@ -147,6 +149,39 @@ namespace TCObjectStorageClient.ViewModels
                 isSuccess &= await client.UploadFile(token, Account, ContainerName, filePath, File.ReadAllBytes(child.entity.Path));
             }
             _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files");
+        }
+
+        public async void GetFiles()
+        {
+            await GetFilesInContainer();
+        }
+
+        private async Task<(bool isSuccess, List<string> files)> GetFilesInContainer()
+        {
+            TCObjectStorage client = new TCObjectStorage();
+            var token = await client.PostToken(TenentName, UserName, Password);
+            var result = await client.GetFiles(token, Account, ContainerName);
+            return result;
+        }
+
+        public async void DeleteAllFilesInContainer()
+        {
+            TCObjectStorage client = new TCObjectStorage();
+            var token = await client.PostToken(TenentName, UserName, Password);
+
+            var result = await GetFilesInContainer();
+            var files = result.files;
+
+            foreach (var file in files)
+            {
+                var isSuccesss = await client.DeleteFile(token, Account, ContainerName, file);
+                if (!isSuccesss)
+                {
+                    _alertDialog.ShowAlert($"Fail to delete file : {file}");
+                    return;
+                }
+            }
+            _alertDialog.ShowAlert($"Success to delete file");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
