@@ -77,61 +77,18 @@ namespace TCObjectStorageClient.ViewModels
         public void UploadFiles()
         {
             var filePathList = _fileImporter.GetFilePathList();
-            if (filePathList.Count > 0)
+
+            if (filePathList.Count <= 0) return;
+
+            _alertDialog.ShowAlert(filePathList.Aggregate((s1, s2) => s1 + "\n" + s2), async isOk =>
             {
-                _alertDialog.ShowAlert(filePathList.Aggregate((s1, s2) => s1 + "\n" + s2), async isOk =>
-                {
-                    if (isOk)
-                    {
-                        var isSuccess = true;
+                if (!isOk) return;
 
-                        foreach (var filePath in filePathList)
-                        {
-                            TCObjectStorage client = new TCObjectStorage();
-                            var token = await client.PostToken(TenentName, UserName, Password);
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-                            if (token == null)
-                            {
-                                _alertDialog.ShowAlert("Failed to get a token");
-                                return;
-                            }
-
-                            var hasContainer = await client.ContainsContainer(token, Account, ContainerName);
-                            if (!hasContainer)
-                            {
-                                _alertDialog.ShowAlert($"Invalid [{ContainerName}] container");
-                                return;
-                            }
-
-                            isSuccess &= await client.UploadFile(token, Account, ContainerName, Path.GetFileName(filePath), File.ReadAllBytes(filePath));
-                        }
-                        _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files");
-                    }
-                });
-            }
-        }
-
-        public async void UploadDirectory()
-        {
-            var dirInfo = _fileImporter.GetDirectoryInfo();
-            if (dirInfo == null)
-                return;
-
-            var entity = new DirectoryEntity(dirInfo.FullName);
-            var children = entity.GetAllChildren();
-#if DEBUG
-            foreach (var child in children)
-            {
-                Debug.WriteLine($"{child.pathFromBase} : {child.entity.Path}");
-            }
-#endif
-
-            var isSuccess = true;
-            foreach (var child in children)
-            {
-                TCObjectStorage client = new TCObjectStorage();
+                var client = new TCObjectStorage();
                 var token = await client.PostToken(TenentName, UserName, Password);
-
                 if (token == null)
                 {
                     _alertDialog.ShowAlert("Failed to get a token");
@@ -145,10 +102,51 @@ namespace TCObjectStorageClient.ViewModels
                     return;
                 }
 
-                var filePath = child.pathFromBase.Replace('\\', '/');
-                isSuccess &= await client.UploadFile(token, Account, ContainerName, filePath, File.ReadAllBytes(child.entity.Path));
+                var tasks = filePathList
+                    .Select(filePath =>
+                        client.UploadFile(token, Account, ContainerName, Path.GetFileName(filePath), File.ReadAllBytes(filePath)))
+                    .ToList();
+                var isSuccess = (await Task.WhenAll(tasks)).All(_ => _);
+                _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
+                                       $"Elapsed time is {stopwatch.ElapsedMilliseconds} ms");
+            });
+        }
+
+        public async void UploadDirectory()
+        {
+            var dirInfo = _fileImporter.GetDirectoryInfo();
+            if (dirInfo == null)
+                return;
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            var entity = new DirectoryEntity(dirInfo.FullName);
+            var children = entity.GetAllChildren();
+
+            var client = new TCObjectStorage();
+            var token = await client.PostToken(TenentName, UserName, Password);
+            if (token == null)
+            {
+                _alertDialog.ShowAlert("Failed to get a token");
+                return;
             }
-            _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files");
+
+            var hasContainer = await client.ContainsContainer(token, Account, ContainerName);
+            if (!hasContainer)
+            {
+                _alertDialog.ShowAlert($"Invalid [{ContainerName}] container");
+                return;
+            }
+
+            var tasks = children
+                .Select(child =>
+                    client.UploadFile(token, Account, ContainerName, child.pathFromBase.Replace('\\', '/'), File.ReadAllBytes(child.entity.Path)))
+                .ToList();
+            var isSuccess = (await Task.WhenAll(tasks)).All(_ => _);
+            stopwatch.Stop();
+            _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
+                                   $"Elapsed time is {stopwatch.ElapsedMilliseconds} ms");
         }
 
         public async void GetFiles()
@@ -166,22 +164,38 @@ namespace TCObjectStorageClient.ViewModels
 
         public async void DeleteAllFilesInContainer()
         {
-            TCObjectStorage client = new TCObjectStorage();
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            var client = new TCObjectStorage();
             var token = await client.PostToken(TenentName, UserName, Password);
+
+            var hasContainer = await client.ContainsContainer(token, Account, ContainerName);
+            if (!hasContainer)
+            {
+                _alertDialog.ShowAlert($"Invalid [{ContainerName}] container");
+                return;
+            }
 
             var result = await GetFilesInContainer();
             var files = result.files;
 
-            foreach (var file in files)
+            var tasks = files
+                .Select(file => client.DeleteFile(token, Account, ContainerName, file))
+                .ToList();
+            var isSuccess = (await Task.WhenAll(tasks)).All(_ => _);
+
+            stopWatch.Stop();
+            if (isSuccess)
             {
-                var isSuccesss = await client.DeleteFile(token, Account, ContainerName, file);
-                if (!isSuccesss)
-                {
-                    _alertDialog.ShowAlert($"Fail to delete file : {file}");
-                    return;
-                }
+                _alertDialog.ShowAlert($"Success to delete files.\n" +
+                                       $"Elapsed time is {stopWatch.ElapsedMilliseconds} ms");
             }
-            _alertDialog.ShowAlert($"Success to delete file");
+            else
+            {
+                _alertDialog.ShowAlert($"Fail to delete files\n" +
+                                       $"Elapsed time is {stopWatch.ElapsedMilliseconds} ms");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
