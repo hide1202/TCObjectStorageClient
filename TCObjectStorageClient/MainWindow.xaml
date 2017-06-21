@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TCObjectStorageClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="300" Width="520" MinHeight="300" MaxHeight="300" MinWidth=" 520">
     <StackPanel Margin="10">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -51,7 +51,9 @@
             <Label Grid.Column="0" Content="Container name"/>
             <TextBox Grid.Column="1" Text="{Binding ContainerName}"/>
         </Grid>
-        <Button Content="Upload files" Command="{Binding OpenFileCommand}" />
-        <Button Content="Upload directory" Command="{Binding OpenDirectoryCommand}" />
+        <Button Margin="3" Content="Upload files" Command="{Binding OpenFileCommand}" />
+        <Button Margin="3" Content="Upload directory" Command="{Binding OpenDirectoryCommand}" />
+        <Button Margin="3" Content="Delete files in Container" Command="{Binding DeleteFilesCommand}" />
+        <ProgressBar Margin="3" Value="{Binding Path=Progress, Mode=OneWay}" Height="20"/>
     </StackPanel>
 </Window>

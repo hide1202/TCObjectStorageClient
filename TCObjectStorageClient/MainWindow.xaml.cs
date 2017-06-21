@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using TCObjectStorageClient.ViewModels;
 
 namespace TCObjectStorageClient
@@ -29,61 +27,6 @@ namespace TCObjectStorageClient
                     vm.Password = box.Password;
                 }
             }
-        }
-    }
-
-    public abstract class CommandBase : ICommand
-    {
-        protected readonly MainViewModel _viewModel;
-
-        public CommandBase(MainViewModel viewModel)
-        {
-            _viewModel = viewModel;
-        }
-
-        public bool CanExecute(object parameter) => true;
-
-        public void Execute(object parameter)
-        {
-            ExecuteInternal();
-        }
-
-        public event EventHandler CanExecuteChanged;
-
-        protected abstract void ExecuteInternal();
-    }
-
-    public class OpenFileCommand : CommandBase
-    {
-        public OpenFileCommand(MainViewModel viewModel) : base(viewModel)
-        {
-        }
-
-        protected override void ExecuteInternal()
-        {
-            _viewModel.UploadFiles();
-        }
-    }
-
-    public class OpenDirectoryCommand : CommandBase
-    {
-        public OpenDirectoryCommand(MainViewModel viewModel) : base(viewModel)
-        {
-        }
-
-        protected override void ExecuteInternal()
-        {
-            _viewModel.UploadDirectory();
-        }
-    }
-
-    namespace ViewModels
-    {
-        public partial class MainViewModel
-        {
-            public ICommand OpenFileCommand => new OpenFileCommand(this);
-
-            public ICommand OpenDirectoryCommand => new OpenDirectoryCommand(this);
         }
     }
 }
