@@ -40,7 +40,7 @@ namespace TCObjectStorageClient.Models
             var fileInfos = info.GetFiles();
 
             dirInfos.ForEach(i => Children.Add(new DirectoryEntity(i.FullName)));
-            fileInfos.ForEach(i => Children.Add(new FileEntity(i.FullName)));
+            fileInfos.ForEach(i => { if(!i.Attributes.HasFlag(FileAttributes.Hidden)) Children.Add(new FileEntity(i.FullName)); });
         }
 
         public IEnumerable<(string pathFromBase, IDiskEntity entity)> GetAllChildren()
