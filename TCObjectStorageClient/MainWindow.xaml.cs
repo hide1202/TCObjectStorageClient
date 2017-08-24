@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Autofac;
+using TCObjectStorageClient.Interfaces;
 using TCObjectStorageClient.ViewModels;
 
 namespace TCObjectStorageClient
@@ -13,7 +15,11 @@ namespace TCObjectStorageClient
         {
             InitializeComponent();
 
-            var mainViewModel = new MainViewModel(new WindowsFileImporter(), new WindowsAlertDialog(this), new WindowsPreferences());
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new WindowsModule(this));
+            var container = builder.Build();
+
+            var mainViewModel = new MainViewModel(container);
             this.DataContext = mainViewModel;
         }
 

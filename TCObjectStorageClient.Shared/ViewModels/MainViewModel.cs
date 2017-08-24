@@ -5,12 +5,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Autofac;
 using TCObjectStorageClient.Annotations;
 using TCObjectStorageClient.Interfaces;
 using TCObjectStorageClient.IO;
 using TCObjectStorageClient.Models;
 using TCObjectStorageClient.ObjectStorage;
+using IContainer = Autofac.IContainer;
 
 namespace TCObjectStorageClient.ViewModels
 {
@@ -26,6 +30,12 @@ namespace TCObjectStorageClient.ViewModels
         private string _token;
         private string _account;
         private string _containerName;
+
+        public MainViewModel(IContainer container) 
+            : this(container.Resolve<IFileImporter>(), container.Resolve<IAlertDialog>(), container.Resolve<IPreferences>())
+        {
+            
+        }
 
         public MainViewModel(IFileImporter fileImporter, IAlertDialog alertDialog, IPreferences preferences)
         {
@@ -133,7 +143,7 @@ namespace TCObjectStorageClient.ViewModels
 
                 var tasks = filePathList
                     .Select(filePath =>
-                        client.UploadFile(token, Account, ContainerName, Path.GetFileName(filePath), File.ReadAllBytes(filePath)))
+                        client.UploadFile(token, Account, ContainerName, Path.GetFileName(filePath), new FileStream(filePath, FileMode.Open)))
                     .ToList();
                 var isSuccess = await AwaitForProgress(tasks, onProgress);
                 _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
@@ -164,18 +174,21 @@ namespace TCObjectStorageClient.ViewModels
             if (!await HasContainer(client, token))
                 return;
 
-            var tasks = children
-                .Select(child =>
-                    client.UploadFile(token, Account, ContainerName, child.pathFromBase.Replace('\\', '/'), File.ReadAllBytes(child.entity.Path)))
-                .ToList();
+            _alertDialog.ShowAlert("Do you want to upload file under directory", async isOk =>
+            {
+                var isContainsDirectory = isOk;
+                var tasks = children.Select(child =>
+                    client.UploadFile(token, Account, ContainerName,
+                        (isContainsDirectory ? $"{child.parent}/" : string.Empty) +
+                        child.pathFromBase.Replace('\\', '/'), new FileStream(child.entity.Path, FileMode.Open))).ToList();
 
-            var isSuccess = await AwaitForProgress(tasks, onProgress);
-            stopwatch.Stop();
-            
-            _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
-                                   $"Elapsed time is {stopwatch.ElapsedMilliseconds} ms");
+                var isSuccess = await AwaitForProgress(tasks, onProgress);
+                stopwatch.Stop();
+
+                _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
+                                       $"Elapsed time is {stopwatch.ElapsedMilliseconds} ms");
+            });
         }
-
 
         public async void GetFiles()
         {

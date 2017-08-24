@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCObjectStorageClient.WPF",
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TCObjectStorageClient.Shared", "TCObjectStorageClient.Shared\TCObjectStorageClient.Shared.shproj", "{697CD0B0-057D-46C7-B83F-1D2D5B9CF1A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCObjectStorageClient.Shared.Test", "TCObjectStorageClient.Shared.Test\TCObjectStorageClient.Shared.Test.csproj", "{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		TCObjectStorageClient.Shared\TCObjectStorageClient.Shared.projitems*{697cd0b0-057d-46c7-b83f-1d2d5b9cf1a0}*SharedItemsImports = 13
@@ -21,6 +23,10 @@ Global
 		{ECA14BF6-4C6A-4C6D-8375-8FB5EFCFC5BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECA14BF6-4C6A-4C6D-8375-8FB5EFCFC5BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECA14BF6-4C6A-4C6D-8375-8FB5EFCFC5BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

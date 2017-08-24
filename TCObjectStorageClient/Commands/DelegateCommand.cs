@@ -7,7 +7,7 @@ namespace TCObjectStorageClient.Commands
     {
         private readonly Action _action;
 
-        public DelegateCommand(MainViewModel viewModel, Action action) : base(viewModel)
+        public DelegateCommand(Action action)
         {
             _action = action;
         }

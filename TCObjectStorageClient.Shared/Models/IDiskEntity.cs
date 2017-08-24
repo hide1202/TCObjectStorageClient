@@ -43,7 +43,7 @@ namespace TCObjectStorageClient.Models
             fileInfos.ForEach(i => { if(!i.Attributes.HasFlag(FileAttributes.Hidden)) Children.Add(new FileEntity(i.FullName)); });
         }
 
-        public IEnumerable<(string pathFromBase, IDiskEntity entity)> GetAllChildren()
+        public IEnumerable<(string parent, string pathFromBase, IDiskEntity entity)> GetAllChildren()
         {
             var basePath = Path;
 
@@ -52,7 +52,7 @@ namespace TCObjectStorageClient.Models
                 yield return el;
         }
 
-        private IEnumerable<(string pathFromBase, IDiskEntity entity)> ForEachInternal(string basePath, IDiskEntity entity)
+        private IEnumerable<(string parent, string pathFromBase, IDiskEntity entity)> ForEachInternal(string basePath, IDiskEntity entity)
         {
             foreach (var child in entity.Children)
             {
@@ -64,7 +64,10 @@ namespace TCObjectStorageClient.Models
                 }
                 else
                 {
-                    yield return (child.Path.Substring(basePath.Length + 1), child);
+                    var parentEndIndex = child.Path.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
+                    var parentStartIndex = child.Path.Substring(0, parentEndIndex).LastIndexOf(System.IO.Path.DirectorySeparatorChar);
+                    var parent = child.Path.Substring(parentStartIndex + 1, parentEndIndex - parentStartIndex - 1);
+                    yield return (parent, child.Path.Substring(basePath.Length + 1), child);
                 }
             }
         }

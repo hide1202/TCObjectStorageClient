@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 
@@ -6,7 +7,7 @@ namespace TCObjectStorageClient.ObjectStorage
 {
     public interface IObjectStorage
     {
-        Task<bool> UploadFile(string token, string account, string containerName, string objectName, byte[] body);
+        Task<bool> UploadFile(string token, string account, string containerName, string objectName, Stream bodyStream);
         
         Task<(bool, List<string>)> GetFiles(string token, string account, string containerName);
 

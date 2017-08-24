@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TCObjectStorageClient.Models;
@@ -39,13 +39,17 @@ namespace TCObjectStorageClient.ObjectStorage
             return responseJson?.Access?.Token?.Id;
         }
 
-        public async Task<bool> UploadFile(string token, string account, string containerName, string objectName, byte[] body)
+        public async Task<bool> UploadFile(string token, string account, string containerName, string objectName, Stream stream)
         {
             HttpClient client = new HttpClient();
+            client.Timeout = Timeout.InfiniteTimeSpan;
             var url = ObjectStorageUrl.UrlForObject(account, containerName, objectName);
             client.DefaultRequestHeaders.Add("X-Auth-Token", token);
-            var response = await client.PutAsync(url, new ByteArrayContent(body));
-            return response.StatusCode == HttpStatusCode.Created;
+            using (stream)
+            {
+                var response = await client.PutAsync(url, new StreamContent(stream));
+                return response.StatusCode == HttpStatusCode.Created;
+            }
         }
 
         public async Task<(bool, List<string>)> GetFiles(string token, string account, string containerName)

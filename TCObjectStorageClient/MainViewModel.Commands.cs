@@ -13,10 +13,10 @@ namespace TCObjectStorageClient.ViewModels
             OnPropertyChanged(ref _progress, percentage * 100.0f, propertyName: "Progress");
         }
 
-        public ICommand OpenFileCommand => new DelegateCommand(this, () => UploadFiles(InvalidateProgress));
+        public ICommand OpenFileCommand => new DelegateCommand(() => UploadFiles(InvalidateProgress));
 
-        public ICommand OpenDirectoryCommand => new DelegateCommand(this, () => UploadDirectory(InvalidateProgress));
+        public ICommand OpenDirectoryCommand => new DelegateCommand(() => UploadDirectory(InvalidateProgress));
 
-        public ICommand DeleteFilesCommand => new DelegateCommand(this, () => DeleteAllFilesInContainer(InvalidateProgress));
+        public ICommand DeleteFilesCommand => new DelegateCommand(() => DeleteAllFilesInContainer(InvalidateProgress));
     }
 }
