@@ -1,15 +1,14 @@
 ﻿using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TCObjectStorageClient.Models;
+using Xunit;
 
 namespace TCObjectStorageClient.Shared.Test.Models
 {
-    [TestClass]
     public class IDiskEntityTest
     {
-        [TestMethod]
-        public void Test1()
+        [Fact]
+        public void BasePathTest()
         {
             // Arrange
             string dir = $"Models{Path.DirectorySeparatorChar}Resources";
@@ -20,7 +19,7 @@ namespace TCObjectStorageClient.Shared.Test.Models
             var children = entity.GetAllChildren();
 
             // Assert
-            Assert.IsTrue(File.Exists(path));
+            Assert.True(File.Exists(path));
             foreach (var child in children)
             {
                 Console.WriteLine($"Child : Parent[{child.parent}] PathFromBase[{child.pathFromBase}] Path[{child.entity.Path}]");

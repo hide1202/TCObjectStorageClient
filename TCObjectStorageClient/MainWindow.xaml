@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TCObjectStorageClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="300" Width="520" MinHeight="300" MaxHeight="300" MinWidth=" 520">
+        Title="MainWindow" Height="260" Width="520" MinHeight="260" MaxHeight="300" MinWidth=" 520">
     <StackPanel Margin="10">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -32,15 +32,6 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Content="Password"/>
             <PasswordBox Grid.Column="1" PasswordChanged="OnPasswordChanged"/>
-        </Grid>
-
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100px"/>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="Account"/>
-            <TextBox Grid.Column="1" Text="{Binding Account}"/>
         </Grid>
 
         <Grid>

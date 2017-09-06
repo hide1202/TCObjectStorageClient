@@ -13,8 +13,8 @@ using TCObjectStorageClient.Annotations;
 using TCObjectStorageClient.Interfaces;
 using TCObjectStorageClient.IO;
 using TCObjectStorageClient.Models;
-using TCObjectStorageClient.ObjectStorage;
 using IContainer = Autofac.IContainer;
+using ToastCloud.ObjectStorage;
 
 namespace TCObjectStorageClient.ViewModels
 {
@@ -28,8 +28,9 @@ namespace TCObjectStorageClient.ViewModels
         private string _userName;
         private string _password;
         private string _token;
-        private string _account;
         private string _containerName;
+
+        private ObjectStorage _objectStorage;
 
         public MainViewModel(IContainer container) 
             : this(container.Resolve<IFileImporter>(), container.Resolve<IAlertDialog>(), container.Resolve<IPreferences>())
@@ -43,8 +44,9 @@ namespace TCObjectStorageClient.ViewModels
             _alertDialog = alertDialog;
             _preferences = preferences;
 
+            _objectStorage = new ObjectStorage();
+
             TenentName = _preferences.GetString(Constants.TenentNameKey, string.Empty);
-            Account = _preferences.GetString(Constants.AccountKey, string.Empty);
             UserName = _preferences.GetString(Constants.UserNameKey, string.Empty);
             ContainerName = _preferences.GetString(Constants.ContainerNameKey, string.Empty);
         }
@@ -72,28 +74,32 @@ namespace TCObjectStorageClient.ViewModels
             get => _token;
             set => OnPropertyChanged(ref _token, value);
         }
-
-        public string Account
-        {
-            get => _account;
-            set => OnPropertyChanged(ref _account, value, Constants.AccountKey);
-        }
-
+        
         public string ContainerName
         {
             get => _containerName;
             set => OnPropertyChanged(ref _containerName, value, Constants.ContainerNameKey);
         }
 
-        private async Task<bool> HasContainer(TCObjectStorage client, string token)
+        private async Task<bool> HasContainer()
         {
-            var hasContainer = await client.ContainsContainer(token, Account, ContainerName);
+            var result = await _objectStorage.ContainsContainer(ContainerName);
+            var hasContainer = result.IsSuccess ? result.Value : false;
             if (!hasContainer)
                 _alertDialog.ShowAlert($"Invalid [{ContainerName}] container");
             return hasContainer;
         }
 
-        private async Task<bool> AwaitForProgress(List<Task<bool>> tasks, Action<float> onProgress)
+        private async Task<bool> Authenticate()
+        {
+            if (_objectStorage.IsAuthenticate)
+                return true;
+
+            var result = await _objectStorage.Authenticate(TenentName, UserName, Password);
+            return result.IsSuccess ? result.Value : false;
+        }
+
+        private async Task<bool> AwaitForProgress<T>(List<Task<T>> tasks, Action<float> onProgress)
         {
             var isSuccessList = new bool[tasks.Count];
             while (isSuccessList.Count(_ => _) < tasks.Count)
@@ -130,20 +136,19 @@ namespace TCObjectStorageClient.ViewModels
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
 
-                var client = new TCObjectStorage();
-                var token = await client.PostToken(TenentName, UserName, Password);
-                if (token == null)
+                var isAuthenticate = await Authenticate();
+                if (!isAuthenticate)
                 {
                     _alertDialog.ShowAlert("Failed to get a token");
                     return;
                 }
 
-                if (!await HasContainer(client, token))
+                if (!await HasContainer())
                     return;
 
                 var tasks = filePathList
                     .Select(filePath =>
-                        client.UploadFile(token, Account, ContainerName, Path.GetFileName(filePath), new FileStream(filePath, FileMode.Open)))
+                        _objectStorage.UploadFile(ContainerName, Path.GetFileName(filePath), new FileStream(filePath, FileMode.Open)))
                     .ToList();
                 var isSuccess = await AwaitForProgress(tasks, onProgress);
                 _alertDialog.ShowAlert($"{(isSuccess ? "Success" : "Fail")} to upload files.\n" +
@@ -163,22 +168,21 @@ namespace TCObjectStorageClient.ViewModels
             var entity = new DirectoryEntity(dirInfo.FullName);
             var children = entity.GetAllChildren();
 
-            var client = new TCObjectStorage();
-            var token = await client.PostToken(TenentName, UserName, Password);
-            if (token == null)
+            var isAuthenticate = await Authenticate();
+            if (!isAuthenticate)
             {
                 _alertDialog.ShowAlert("Failed to get a token");
                 return;
             }
 
-            if (!await HasContainer(client, token))
+            if (!await HasContainer())
                 return;
 
             _alertDialog.ShowAlert("Do you want to upload file under directory", async isOk =>
             {
                 var isContainsDirectory = isOk;
                 var tasks = children.Select(child =>
-                    client.UploadFile(token, Account, ContainerName,
+                    _objectStorage.UploadFile(ContainerName,
                         (isContainsDirectory ? $"{child.parent}/" : string.Empty) +
                         child.pathFromBase.Replace('\\', '/'), new FileStream(child.entity.Path, FileMode.Open))).ToList();
 
@@ -197,10 +201,12 @@ namespace TCObjectStorageClient.ViewModels
 
         private async Task<(bool isSuccess, List<string> files)> GetFilesInContainer()
         {
-            TCObjectStorage client = new TCObjectStorage();
-            var token = await client.PostToken(TenentName, UserName, Password);
-            var result = await client.GetFiles(token, Account, ContainerName);
-            return result;
+            await Authenticate();
+            var result = await _objectStorage.FileList(ContainerName);
+            if (result.IsSuccess)
+                return (true, result.Value.Files.Select(i => i.Name).ToList());
+
+            return (false, null);
         }
 
         public async void DeleteAllFilesInContainer(Action<float> onProgress)
@@ -208,17 +214,16 @@ namespace TCObjectStorageClient.ViewModels
             var stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            var client = new TCObjectStorage();
-            var token = await client.PostToken(TenentName, UserName, Password);
+            var isAuthenticate = await Authenticate();
 
-            if (!await HasContainer(client, token))
+            if (!isAuthenticate)
                 return;
 
             var result = await GetFilesInContainer();
             var files = result.files;
 
             var tasks = files
-                .Select(file => client.DeleteFile(token, Account, ContainerName, file))
+                .Select(file => _objectStorage.DeleteFile(ContainerName, file))
                 .ToList();
             var isSuccess = await AwaitForProgress(tasks, onProgress);
 
