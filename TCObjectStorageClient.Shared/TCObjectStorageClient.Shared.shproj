@@ -10,4 +10,15 @@
   <PropertyGroup />
   <Import Project="TCObjectStorageClient.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\ToastCloudObjectStorageSdk\ToastCloudObjectStorageSdk.csproj">
+      <Project>{b1029a1f-ffdb-4f86-b04c-07e74bb36d4e}</Project>
+      <Name>ToastCloudObjectStorageSdk</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CSharpMonad, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\csharp-monad.1.0.1\lib\net46\CSharpMonad.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

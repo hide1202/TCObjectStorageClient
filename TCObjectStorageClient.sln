@@ -1,13 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCObjectStorageClient.WPF", "TCObjectStorageClient\TCObjectStorageClient.WPF.csproj", "{ECA14BF6-4C6A-4C6D-8375-8FB5EFCFC5BF}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TCObjectStorageClient.Shared", "TCObjectStorageClient.Shared\TCObjectStorageClient.Shared.shproj", "{697CD0B0-057D-46C7-B83F-1D2D5B9CF1A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCObjectStorageClient.Shared.Test", "TCObjectStorageClient.Shared.Test\TCObjectStorageClient.Shared.Test.csproj", "{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToastCloudObjectStorageSdk", "ToastCloudObjectStorageSdk\ToastCloudObjectStorageSdk.csproj", "{B1029A1F-FFDB-4F86-B04C-07E74BB36D4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToastCloudObjectStorageSdk.Test", "ToastCloudObjectStorageSdk.Test\ToastCloudObjectStorageSdk.Test.csproj", "{415DCF9A-5BB7-4658-B358-ABA4761C354A}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -27,8 +30,19 @@ Global
 		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05FFFCEC-E2D6-471D-91DA-5B7A44B66B43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1029A1F-FFDB-4F86-B04C-07E74BB36D4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1029A1F-FFDB-4F86-B04C-07E74BB36D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1029A1F-FFDB-4F86-B04C-07E74BB36D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1029A1F-FFDB-4F86-B04C-07E74BB36D4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{415DCF9A-5BB7-4658-B358-ABA4761C354A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{415DCF9A-5BB7-4658-B358-ABA4761C354A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{415DCF9A-5BB7-4658-B358-ABA4761C354A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{415DCF9A-5BB7-4658-B358-ABA4761C354A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {135B17C5-FC95-4366-AB0F-04837229DE24}
 	EndGlobalSection
 EndGlobal

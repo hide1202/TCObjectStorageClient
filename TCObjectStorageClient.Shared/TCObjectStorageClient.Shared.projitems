@@ -17,9 +17,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\CreateTokenRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\CreateTokenResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\IDiskEntity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ObjectStorage\IObjectStorage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ObjectStorage\TCObjectStorage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ObjectStorage\ObjectStorageUrl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MainViewModel.cs" />
   </ItemGroup>
 </Project>
