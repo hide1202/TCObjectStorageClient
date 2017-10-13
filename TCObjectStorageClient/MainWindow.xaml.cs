@@ -21,6 +21,8 @@ namespace TCObjectStorageClient
 
             var mainViewModel = new MainViewModel(container);
             this.DataContext = mainViewModel;
+
+            this.PathTextBox.DataContext = container.Resolve<IFileImporter>();
         }
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)

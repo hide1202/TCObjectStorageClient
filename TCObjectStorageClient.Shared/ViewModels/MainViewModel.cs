@@ -30,7 +30,7 @@ namespace TCObjectStorageClient.ViewModels
         private string _token;
         private string _containerName;
 
-        private ObjectStorage _objectStorage;
+        private readonly ObjectStorage _objectStorage;
 
         public MainViewModel(IContainer container) 
             : this(container.Resolve<IFileImporter>(), container.Resolve<IAlertDialog>(), container.Resolve<IPreferences>())

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Autofac;
 using TCObjectStorageClient.Interfaces;
 using TCObjectStorageClient.IO;
@@ -21,9 +16,13 @@ namespace TCObjectStorageClient
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterInstance<IFileImporter>(new WindowsFileImporter());
-            builder.RegisterInstance<IAlertDialog>(new WindowsAlertDialog(_parent));
-            builder.RegisterInstance<IPreferences>(new WindowsPreferences());
+            var alertDialog = new WindowsAlertDialog(_parent);
+            var prefrences = new WindowsPreferences();
+            var fileImporter = new WindowsFileImporter(prefrences);
+
+            builder.RegisterInstance<IFileImporter>(fileImporter);
+            builder.RegisterInstance<IAlertDialog>(alertDialog);
+            builder.RegisterInstance<IPreferences>(prefrences);
         }
     }
 }
