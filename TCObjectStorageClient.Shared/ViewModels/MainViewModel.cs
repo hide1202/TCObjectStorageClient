@@ -180,11 +180,9 @@ namespace TCObjectStorageClient.ViewModels
 
             _alertDialog.ShowAlert("Do you want to upload file under directory", async isOk =>
             {
-                var isContainsDirectory = isOk;
                 var tasks = children.Select(child =>
                     _objectStorage.UploadFile(ContainerName,
-                        (isContainsDirectory ? $"{child.parent}/" : string.Empty) +
-                        child.pathFromBase.Replace('\\', '/'), new FileStream(child.entity.Path, FileMode.Open))).ToList();
+                        child.pathFromBase.Replace(Path.DirectorySeparatorChar, '/'), new FileStream(child.entity.Path, FileMode.Open))).ToList();
 
                 var isSuccess = await AwaitForProgress(tasks, onProgress);
                 stopwatch.Stop();

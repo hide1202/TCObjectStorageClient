@@ -2,30 +2,34 @@
 using System.IO;
 using TCObjectStorageClient.Models;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace TCObjectStorageClient.Shared.Test.Models
 {
     public class IDiskEntityTest
     {
+        private readonly ITestOutputHelper _output;
+
+        public IDiskEntityTest(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [Fact]
         public void BasePathTest()
         {
             // Arrange
             string dir = $"Models{Path.DirectorySeparatorChar}Resources";
-            string path = $"{dir}{Path.DirectorySeparatorChar}Test.txt";
 
             // Act
             var entity = new DirectoryEntity(new DirectoryInfo(dir).FullName);
             var children = entity.GetAllChildren();
 
             // Assert
-            Assert.True(File.Exists(path));
             foreach (var child in children)
             {
-                Console.WriteLine($"Child : Parent[{child.parent}] PathFromBase[{child.pathFromBase}] Path[{child.entity.Path}]");
+                _output.WriteLine($"Child : Parent[{child.parent}] PathFromBase[{child.pathFromBase}] Path[{child.entity.Path}]");
             }
-            
-            //Assert.AreEqual("Resources", entity.Path);
         }
     }
 }
